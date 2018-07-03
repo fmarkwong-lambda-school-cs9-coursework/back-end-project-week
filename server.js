@@ -81,7 +81,6 @@ const passportOptions = { session: false };
 const authenticate = passport.authenticate('local', passportOptions); // authenticate using local strategy (for user login)
 const protected = passport.authenticate('jwt', passportOptions); // authenticate using jwt strategy (for api authentication)
 
-
 function makeToken(user) {
   const timestamp = new Date().getTime();
   const payload = {
@@ -117,23 +116,27 @@ server.get('/logout', asyncHandler((req, res) => {
   res.redirect('/');
 }));
 
-server.post('/api/notes', protected, asyncHandler(async (req, res) => {
+// server.post('/api/notes', protected, asyncHandler(async (req, res) => {
+server.post('/api/notes',  asyncHandler(async (req, res) => {
   const response = await Note.create(req.body)
   res.status(201).json(response);
 }));
 
-server.get('/api/notes', protected, asyncHandler(async (req, res) => {
+// server.get('/api/notes', protected, asyncHandler(async (req, res) => {
+server.get('/api/notes', asyncHandler(async (req, res) => {
   const response = await Note.find()
   res.status(200).json(response);
 }));
 
-server.get('/api/notes/:id', protected, asyncHandler(async (req, res) => {
+// server.get('/api/notes/:id', protected, asyncHandler(async (req, res) => {
+server.get('/api/notes/:id', asyncHandler(async (req, res) => {
   const response = await Note.findById(req.params.id)
     || `Note with id ${req.params.id} not found`;
   res.status(200).json(response);
 }));
 
-server.put('/api/notes/:id', protected, asyncHandler(async (req, res) => {
+// server.put('/api/notes/:id', protected, asyncHandler(async (req, res) => {
+server.put('/api/notes/:id', asyncHandler(async (req, res) => {
   // const sentScore = sentiment.analyze(req.body.content);
   // req.body.sentiment = sentScore.score;
   // req.body.comparative = sentScore.comparative;
@@ -157,7 +160,8 @@ server.put('/api/notes/:id', protected, asyncHandler(async (req, res) => {
   res.status(200).json(response);
 }));
 
-server.delete('/api/notes/:id', protected, asyncHandler(async (req, res) => {
+server.delete('/api/notes/:id', asyncHandler(async (req, res) => {
+// server.delete('/api/notes/:id', protected, asyncHandler(async (req, res) => {
   const response = await Note.findByIdAndRemove(req.params.id)
     || `Note with id ${req.params.id} not found`;
   res.status(200).json({ message: `Note with id ${response._id} deleted.`});
